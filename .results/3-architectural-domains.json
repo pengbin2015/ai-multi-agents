@@ -1,0 +1,100 @@
+{
+  "data-layer": {
+    "required_patterns": {
+      "singleton-state-management": "All state management must use the Singleton pattern with static instance property (e.g., FullList.instance)",
+      "localStorage-persistence": "All data persistence must use localStorage with automatic save on every mutation",
+      "class-based-models": "All data models must be implemented as TypeScript classes with private fields and getter/setter accessors",
+      "interface-contracts": "All classes must implement corresponding interfaces that define their public API"
+    },
+    "architectural_constraints": {
+      "singleton-state-management": "State classes must have private constructors and expose a single static instance. No multiple instances allowed.",
+      "localStorage-persistence": "Persistence operations (save/load) must be encapsulated within the model class. External code should not directly access localStorage.",
+      "class-based-models": "Properties must be private with underscore prefix (_id, _item, _checked). Public access only through getters/setters.",
+      "interface-contracts": "Interfaces must be defined in the same file as their implementation class. The class name should match the interface without the 'I' prefix (e.g., Item interface, LitsItem class)."
+    }
+  },
+  "ui-rendering": {
+    "required_patterns": {
+      "singleton-template": "All DOM rendering must go through the ListTemplate singleton instance",
+      "imperative-dom-manipulation": "All UI updates must use direct DOM API calls (createElement, append, etc.) - no declarative framework",
+      "full-rerender-on-change": "On state changes, the entire list must be cleared and re-rendered from scratch",
+      "inline-event-binding": "Event listeners must be attached directly to dynamically created elements within the render method"
+    },
+    "architectural_constraints": {
+      "singleton-template": "Template classes must have private constructors and manage a single DOM element reference stored as instance property",
+      "imperative-dom-manipulation": "No JSX, template literals, or innerHTML usage. All elements must be created programmatically with typed DOM APIs (e.g., HTMLLIElement, HTMLInputElement)",
+      "full-rerender-on-change": "The clear() method must be called before every render(). No partial updates or virtual DOM diffing.",
+      "inline-event-binding": "Event listeners must be anonymous arrow functions that directly reference the data model and trigger appropriate state changes followed by re-render"
+    }
+  },
+  "application-initialization": {
+    "required_patterns": {
+      "dom-content-loaded": "Application initialization must wait for DOMContentLoaded event",
+      "init-function": "Main application logic must be encapsulated in an initApp function",
+      "instance-references": "The init function must obtain singleton instances at the start (const fullList = FullList.instance)",
+      "load-then-render": "Initial render must load persisted data first (fullList.load()) then call template.render()"
+    },
+    "architectural_constraints": {
+      "dom-content-loaded": "No code should execute before DOMContentLoaded. All setup must be in initApp() called by the event listener.",
+      "init-function": "The initApp function must be a void-returning function with no parameters. It should set up all event listeners.",
+      "instance-references": "Never instantiate classes directly with 'new'. Always use the static instance property.",
+      "load-then-render": "The load() call must happen before the first render() to restore saved state. This is the only place load() should be called."
+    }
+  },
+  "event-handling": {
+    "required_patterns": {
+      "form-submit-prevention": "Form submissions must call preventDefault() to prevent page reload",
+      "type-safe-element-access": "All DOM element queries must use type assertions (e.g., as HTMLFormElement, as HTMLInputElement)",
+      "input-validation": "Text input must be trimmed and checked for empty strings before processing",
+      "state-then-render": "Event handlers must update the data model first, then trigger a re-render of the UI"
+    },
+    "architectural_constraints": {
+      "form-submit-prevention": "All form event listeners must accept typed Event parameters (e.g., e: SubmitEvent) and call e.preventDefault() as first action",
+      "type-safe-element-access": "getElementById calls must always include type assertions. No type: any or implicit any types allowed.",
+      "input-validation": "Input validation logic must happen in the event handler before calling model methods. No validation in model layer.",
+      "state-then-render": "Never manipulate DOM directly in event handlers. Always call model methods followed by template.render(fullList)."
+    }
+  },
+  "styling": {
+    "required_patterns": {
+      "single-global-stylesheet": "All styles must be in a single style.css file imported in main.ts",
+      "bem-like-naming": "CSS classes must follow block__element naming pattern (e.g., newItemEntry__form, newItemEntry__button)",
+      "semantic-class-names": "Class names must describe function/purpose, not appearance (e.g., .button, .item, .listContainer)",
+      "offscreen-accessibility": "Screen-reader-only content must use .offscreen class with position: absolute; left: -10000px"
+    },
+    "architectural_constraints": {
+      "single-global-stylesheet": "No CSS modules, styled-components, or scoped styles. All styles are global and must be organized by section/component.",
+      "bem-like-naming": "Block names should not have underscores. Element modifiers should use double underscores. (e.g., block__element not block_element)",
+      "semantic-class-names": "Avoid presentation-focused names like .red-button or .large-text. Use role-based names like .button or .item.",
+      "offscreen-accessibility": "Hidden accessibility labels must use .offscreen class. Do not use display: none or visibility: hidden as these hide from screen readers."
+    }
+  },
+  "accessibility": {
+    "required_patterns": {
+      "semantic-html": "Use semantic HTML5 elements (main, section, header, form, ul, li)",
+      "aria-labels": "Interactive buttons must have aria-label attributes describing their action",
+      "label-associations": "Form inputs must have associated label elements using for/id attributes",
+      "keyboard-navigation": "Interactive elements must support keyboard navigation with tabIndex where needed"
+    },
+    "architectural_constraints": {
+      "semantic-html": "Do not use div/span where semantic elements exist. Every page must have exactly one h1.",
+      "aria-labels": "Buttons without visible text must include descriptive aria-label (e.g., 'Add new item to list', 'Remove all items from the list')",
+      "label-associations": "Every input[type='text'] or input[type='checkbox'] must have a corresponding label with matching for/id. Use .offscreen class for visually hidden labels.",
+      "keyboard-navigation": "Dynamically created checkboxes must set tabIndex = 0 to ensure keyboard access."
+    }
+  },
+  "typescript-configuration": {
+    "required_patterns": {
+      "strict-mode": "TypeScript strict mode must be enabled with all type checking options",
+      "no-unused-code": "noUnusedLocals and noUnusedParameters must be enabled",
+      "explicit-types": "All function parameters and return types must be explicitly typed",
+      "interface-first": "Define interfaces before implementing classes"
+    },
+    "architectural_constraints": {
+      "strict-mode": "tsconfig.json must have strict: true. All code must compile without type errors or warnings.",
+      "no-unused-code": "No unused variables, parameters, or imports allowed. Build will fail if any exist.",
+      "explicit-types": "Function signatures must include parameter types and return types (e.g., initApp(): void, not initApp()). No implicit any allowed.",
+      "interface-first": "Interfaces must be exported before the class implementation in the same file. Use 'export default class' for the implementing class."
+    }
+  }
+}

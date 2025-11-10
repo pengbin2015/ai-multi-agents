@@ -1,0 +1,52 @@
+{
+  "entry-point": [
+    "./todo-list-typescript-main/src/main.ts"
+  ],
+  "models": [
+    "./todo-list-typescript-main/src/models/ListItem.ts",
+    "./todo-list-typescript-main/src/models/FullList.ts"
+  ],
+  "templates": [
+    "./todo-list-typescript-main/src/templates/ListTemplate.ts"
+  ],
+  "data-persistence": [
+    "./todo-list-typescript-main/src/models/FullList.ts"
+  ],
+  "dom-manipulation": [
+    "./todo-list-typescript-main/src/templates/ListTemplate.ts",
+    "./todo-list-typescript-main/src/main.ts"
+  ],
+  "event-handlers": [
+    "./todo-list-typescript-main/src/main.ts",
+    "./todo-list-typescript-main/src/templates/ListTemplate.ts"
+  ],
+  "singleton-instances": [
+    "./todo-list-typescript-main/src/models/FullList.ts",
+    "./todo-list-typescript-main/src/templates/ListTemplate.ts"
+  ],
+  "interfaces": [
+    "./todo-list-typescript-main/src/models/ListItem.ts",
+    "./todo-list-typescript-main/src/models/FullList.ts",
+    "./todo-list-typescript-main/src/templates/ListTemplate.ts"
+  ],
+  "styles": [
+    "./todo-list-typescript-main/src/css/style.css"
+  ],
+  "html-templates": [
+    "./todo-list-typescript-main/index.html"
+  ],
+  "build-configuration": [
+    "./todo-list-typescript-main/package.json",
+    "./todo-list-typescript-main/tsconfig.json"
+  ],
+  "type-definitions": [
+    "./todo-list-typescript-main/src/vite-env.d.ts"
+  ],
+  "assets": [
+    "./todo-list-typescript-main/public/vite.svg",
+    "./todo-list-typescript-main/src/typescript.svg"
+  ],
+  "documentation": [
+    "./todo-list-typescript-main/README.md"
+  ]
+}
