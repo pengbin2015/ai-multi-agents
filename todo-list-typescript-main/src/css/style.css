@@ -130,7 +130,7 @@ section {
 
 .item>input[type="checkbox"]:checked+label {
   text-decoration: line-through;
-  color: #999;
+  color: yellow;
 }
 
 .item>label {
