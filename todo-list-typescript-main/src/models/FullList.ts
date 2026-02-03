@@ -7,6 +7,7 @@ interface List {
   clearList(): void;
   addItem(itemObj: LitsItem): void;
   removeItem(id: string): void;
+  subscribeToStorageEvents(callback: () => void): void;
 }
 export default class FullList implements List {
   // ? we use this cuz only we have one list in out app
@@ -18,6 +19,9 @@ export default class FullList implements List {
     return this._list;
   }
   load(): void {
+    // Clear existing items to avoid duplicates on reload
+    this._list = [];
+
     const storedList: string | null = localStorage.getItem("myList");
     if (typeof storedList !== "string") return;
 
@@ -30,7 +34,18 @@ export default class FullList implements List {
         itemObj._item,
         itemObj._checked
       );
-      FullList.instance.addItem(newListItem);
+      // Push directly to avoid triggering save() during load
+      this._list.push(newListItem);
+    });
+  }
+
+  subscribeToStorageEvents(callback: () => void): void {
+    window.addEventListener("storage", (event: StorageEvent): void => {
+      // Only react to changes in our "myList" key
+      if (event.key === "myList") {
+        this.load();
+        callback();
+      }
     });
   }
 

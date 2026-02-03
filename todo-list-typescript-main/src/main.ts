@@ -46,6 +46,11 @@ const initApp = (): void => {
 
   // initial render of template
   template.render(fullList);
+
+  // Subscribe to storage events for cross-tab synchronization
+  fullList.subscribeToStorageEvents(() => {
+    template.render(fullList);
+  });
 };
 
 document.addEventListener("DOMContentLoaded", initApp);
