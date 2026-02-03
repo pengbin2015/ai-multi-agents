@@ -1,5 +1,7 @@
 import LitsItem from "./ListItem";
 
+const STORAGE_KEY = "myList";
+
 interface List {
   list: LitsItem[];
   load(): void;
@@ -7,10 +9,13 @@ interface List {
   clearList(): void;
   addItem(itemObj: LitsItem): void;
   removeItem(id: string): void;
+  subscribeToStorageEvents(onStorageChange: () => void): void;
 }
 export default class FullList implements List {
   // ? we use this cuz only we have one list in out app
   static instance: FullList = new FullList();
+
+  private _isSubscribed: boolean = false;
 
   private constructor(private _list: LitsItem[] = []) {}
 
@@ -18,7 +23,10 @@ export default class FullList implements List {
     return this._list;
   }
   load(): void {
-    const storedList: string | null = localStorage.getItem("myList");
+    // Clear existing items to avoid duplicates on reload
+    this._list = [];
+
+    const storedList: string | null = localStorage.getItem(STORAGE_KEY);
     if (typeof storedList !== "string") return;
 
     const parsedList: { _id: string; _item: string; _checked: boolean }[] =
@@ -30,12 +38,27 @@ export default class FullList implements List {
         itemObj._item,
         itemObj._checked
       );
-      FullList.instance.addItem(newListItem);
+      // Push directly to avoid triggering save() during load
+      this._list.push(newListItem);
+    });
+  }
+
+  subscribeToStorageEvents(onStorageChange: () => void): void {
+    // Prevent multiple subscriptions
+    if (this._isSubscribed) return;
+    this._isSubscribed = true;
+
+    window.addEventListener("storage", (event: StorageEvent): void => {
+      // Only react to changes in our storage key
+      if (event.key === STORAGE_KEY) {
+        this.load();
+        onStorageChange();
+      }
     });
   }
 
   save(): void {
-    localStorage.setItem("myList", JSON.stringify(this._list));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(this._list));
   }
 
   clearList(): void {
